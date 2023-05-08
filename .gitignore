@@ -1,0 +1,11 @@
+
+sp_environment/bin/activate
+*.csh
+*.fish
+*.ps1
+sp_environment/bin/pip
+sp_environment/bin/pip3
+*.9
+sp_environment/bin/python
+sp_environment/bin/python3
+sp_environment/pyvenv.cfg
