@@ -3,32 +3,42 @@ import matplotlib.pyplot as plt
 from fOU import fOU
 from estimators import *
 
-fou = fOU(0.3, 100)
 
-y_sample = fou.sample(100)
-x_sample = x_epsilon(y_sample, 0.1, 0.3, 10)
-
-asymptotic_estimator(x_sample,0.3, 10)
-mle_estimator(x_sample, 0.3, 10)
-
+T = 10
 H = 0.3
-T = 10.0
-SIGMA = 4.0
-EPSILON = 0.2 
+epsilon = np.linspace(0.001, 0.1, 10)
 
-fou = fOU(H, T, SIGMA, EPSILON)
-n_values = [400, 300, 200, 100, 75, 50, 33, 25, 20, 16,  10]
+for rep in range(10):
+    for a in range(1,10):
+        row =[]
+        alpha = 0.1*a
+        for EPSILON in epsilon: 
+            N = int(T/(EPSILON**2))
 
-asymp_03_1_02 = []
-mle_03_1_02 = []
-for n in n_values:
-    y_sample = fou.sample(n)
-    x_sample = x_epsilon(y_sample, EPSILON, H, T)
-    asymp_03_1_02.append(asymptotic_estimator(x_sample,H, T))
-    mle_03_1_02.append(mle_estimator(x_sample,H, T))
+            fou = fOU(H, T, epsilon=EPSILON)
 
+            y_sample1 = fou.sample(N)
+            x_sample1 = x_epsilon(y_sample1, EPSILON, H, T)
+            x_subsample1 = subsample(x_sample1, EPSILON, T, alpha)
+            row.append(mle_estimator(x_subsample1, H, T))
+            #print(EPSILON, " done")
+        if a==1: 
+            mle = np.array(row)
+        else:
+            mle = np.vstack((mle, row))
 
-print(asymp_03_1_02)
-print(mle_03_1_02)
-#plt.plot(np.log(asymp_03_1_02))
+        
+        #print("alpha ", alpha, " done")
+    if rep ==0:
+        mean_mle = (1/10)*mle 
+    else: 
+        mean_mle = mean_mle + (1/10)*mle
+    print("rep ", rep, " done")
+np.save('results.npy', mean_mle)
+print(mean_mle)
+#plt.plot(x_sample1)
+#plt.plot(x_subsample1)
+#plt.plot(x_subsample1)
 #plt.show()
+#rem = reminder_approx(x_sample, EPSILON, 1)
+#print(rem)

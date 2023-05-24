@@ -50,3 +50,40 @@ def x_epsilon(y_sample, epsilon, h, T):
         initial += delta*(epsilon**(h-1))*y_sample[k]
         realisation.append(initial)
     return realisation 
+
+def subsample(x_sample, epsilon, T, alpha):
+    x_sample = np.array(x_sample)
+    N = x_sample.shape[0]
+    new_delta = epsilon**alpha 
+    new_N = int(T/new_delta)
+    if new_N > N: 
+        raise Exception("Subsample size larger than original sample size")
+    shift = int(N/new_N)
+
+    x_subsample = [x_sample[0]]
+    for i in range(1, int(N/shift)):
+        x_subsample.append(x_sample[i*shift])
+    return x_subsample
+
+def covariance_x_epsilon(epsilon, delta, size):
+    Q = np.zeros([size,size])
+    for i in range(size): 
+        for j in range(i):
+            Q[i,j] = np.exp(-(i-j)/epsilon)
+    
+    Q = Q + np.transpose(Q) 
+    P = ((epsilon*(np.exp(delta/epsilon)+np.exp(-delta/epsilon)-2))/2)*Q + np.eye(size)*(delta-epsilon*(1-np.exp(-delta/epsilon)))
+    return P
+
+def reminder_approx(x_sample, epsilon, T):
+    x_sample = np.array(x_sample)
+    n = x_sample.shape[0]
+    x_increments = x_sample[1:] - x_sample[:n-1]
+
+    delta = T/n
+    P_eps = covariance_x_epsilon(epsilon, delta, n-1)
+
+    M = 1/delta * np.eye(n-1) - np.linalg.inv(P_eps)
+    print(x_increments)
+
+    return (1/(n-1))*np.dot(x_increments, np.dot(M, x_increments))

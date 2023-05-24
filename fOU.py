@@ -1,5 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
+import sys 
+import warnings
 from utils import ensure_single_arg_constant_function
 from stochastic.processes.continuous import FractionalBrownianMotion
 
@@ -39,6 +41,8 @@ class fOU:
     def sigma(self, value):
         self._sigma = ensure_single_arg_constant_function(value)
 
+    def noise(self, n): 
+        self.noise = self.fractional_noise.sample(n+1)
 
     def sample(self, n, initial = 0.0):
         """
@@ -49,7 +53,8 @@ class fOU:
         exponential volatility = 0
         """
         delta = 1.0 * self.T / n
-        f_BM = self.fractional_noise.sample(n+1)
+        self.noise(n)
+        f_BM = self.noise
 
         realisation = [initial]
         t = 0
@@ -60,4 +65,26 @@ class fOU:
                  -((1/self._scale(t)) * initial) * delta + (self._sigma(t)/(self._scale(t)**self.H))*(f_BM[k+1]- f_BM[k])  )
             realisation.append(initial)
         return realisation
+    
+    def interpolation_sample(self, n, initial=0.0):
+        """
+        Implementation of exact solution for fOU ODE once the fractional Brownian Motion is approximated by a linear interpolation
+        """
+        if self.H <= 1/4: 
+            warnings.warn("Interpolation does not approximate fractional BM for H<=1/4")
+                
+        delta = 1.0 * self.T / n
+        f_BM = self.noise
+
+        realisation = [initial]
+        t = 0
+        
+        for k in range(n):
+            t += delta 
+            initial = initial*np.exp(-(1/self._scale(t))*delta) + (self._sigma(t)/(self._scale(t)**(self.H-1)))*((f_BM[k+1]- f_BM[k])/delta)*(1-np.exp(-delta/self._scale(t)))
+            realisation.append(initial)
+        return realisation
+
+    def riemann_sum_sample(self, n, initial=0.0): 
+        pass 
 
