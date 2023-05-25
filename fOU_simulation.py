@@ -5,7 +5,7 @@ from estimators import *
 
 
 T = 10
-H = 0.3
+H = 0.8
 epsilon = np.linspace(0.001, 0.1, 10)
 
 for rep in range(10):
@@ -25,7 +25,7 @@ for rep in range(10):
         if a==1: 
             mle = np.array(row)
         else:
-            mle = np.vstack((mle, row))
+            mle = np.vstack((mle, row)) 
 
         
         #print("alpha ", alpha, " done")
@@ -34,7 +34,7 @@ for rep in range(10):
     else: 
         mean_mle = mean_mle + (1/10)*mle
     print("rep ", rep, " done")
-np.save('results.npy', mean_mle)
+np.save('results08.npy', mean_mle)
 print(mean_mle)
 #plt.plot(x_sample1)
 #plt.plot(x_subsample1)
