@@ -9,8 +9,8 @@ H = 0.5
 
 epsilon = [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
 first = 0
-for a in range(1,10):
-    ALPHA = 0.1*a
+ALPHA = 0.2
+for a in range(16):
     row = np.array([])
     print("ALPHA: ", ALPHA)
     for EPSILON in epsilon: 
@@ -41,7 +41,7 @@ for a in range(1,10):
         first = 1
     else: 
         matrix = np.vstack((matrix,row))
-
+    ALPHA += 0.05
 
 
 np.save('L2_errors.npy', matrix)
