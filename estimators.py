@@ -75,7 +75,7 @@ def covariance_x_epsilon(epsilon, delta, size):
     P = ((epsilon*(np.exp(delta/epsilon)+np.exp(-delta/epsilon)-2))/2)*Q + np.eye(size)*(delta-epsilon*(1-np.exp(-delta/epsilon)))
     return P
 
-def reminder_approx(x_sample, epsilon, T):
+def split_approx(x_sample, epsilon, T):
     x_sample = np.array(x_sample)
     n = x_sample.shape[0]
     x_increments = x_sample[1:] - x_sample[:n-1]
@@ -83,7 +83,10 @@ def reminder_approx(x_sample, epsilon, T):
     delta = T/n
     P_eps = covariance_x_epsilon(epsilon, delta, n-1)
 
-    M = 1/delta * np.eye(n-1) - np.linalg.inv(P_eps)
-    print(x_increments)
+    P_eps_inv = np.linalg.inv(P_eps)
+    M = (1/delta) * np.eye(n-1) - P_eps_inv
+    reminder = (1/(n-1))*np.dot(x_increments, np.dot(M, x_increments))
+    chi_term = (1/(n-1))*np.dot(x_increments, np.dot(P_eps_inv, x_increments))
 
-    return (1/(n-1))*np.dot(x_increments, np.dot(M, x_increments))
+    return [reminder, chi_term]
+
