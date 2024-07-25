@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import sys 
 import warnings
+import scipy as sci
 from utils import ensure_single_arg_constant_function
 from stochastic.processes.continuous import FractionalBrownianMotion
 
@@ -52,6 +53,12 @@ class fOU:
         volatility = sigma/(epsilon^H)
         exponential volatility = 0
         """
+        if self.H == 0.5: 
+            initial = np.random.normal(0,self._sigma(0)/np.sqrt(2))
+        else: 
+            variance = ((self._sigma(0)**2)*(self._scale(0)**(2*self.H))/2)*sci.special.gamma(2*self.H+1)
+            initial = np.random.normal(0, np.sqrt(variance))
+
         delta = 1.0 * self.T / n
         self.noise(n)
         f_BM = self.noise
@@ -65,6 +72,9 @@ class fOU:
                  -((1/self._scale(t)) * initial) * delta + (self._sigma(t)/(self._scale(t)**self.H))*(f_BM[k+1]- f_BM[k])  )
             realisation.append(initial)
         return realisation
+    
+    def give_noise(self):
+        return self.noise
     
     def interpolation_sample(self, n, initial=0.0):
         """

@@ -8,7 +8,7 @@ plt.rc('text', usetex=True)
 plt.rc('font', family='serif')
 
 #Data
-results = np.load("results08.npy")
+results = np.load("results01.npy")
 epsilon = np.linspace(0.001, 0.1, 10)
 
 results = np.flip(results, axis=0)

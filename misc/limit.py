@@ -29,7 +29,9 @@ def matrix(h, n):
             sigma_n[i,j] = rho_fBM(i,j,h)
     return sigma_n + np.transpose(sigma_n) 
 
-
-mat = matrix(0.9, 100)
+n = 1000
+H = 0.75
+mat = ((1/n)**(2*H))*matrix(0.9, n)
 ev = np.linalg.eig(mat)
-print(np.max(np.abs(ev[0])))
+print(np.min(np.abs(ev[0])))
+print(n**(-2*H))

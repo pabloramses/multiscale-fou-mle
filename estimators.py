@@ -90,3 +90,17 @@ def split_approx(x_sample, epsilon, T):
 
     return [reminder, chi_term]
 
+def check_positions(vector):
+    n = len(vector)
+    sum_distances = 0
+    for i in range(n):
+        for j_1 in range(n):
+            if j_1 == i: 
+                pass
+            else:
+                for j_2 in range(n): 
+                    if j_2 == i: 
+                        pass
+                    else: 
+                        sum_distances += (vector[j_1]-vector[i])*(vector[j_2] - vector[i])
+    return sum_distances
